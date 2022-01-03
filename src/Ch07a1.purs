@@ -13,7 +13,7 @@ foreign import showStringImpl :: String -> String
 -------------------- Tests ----------------------------------------------------------------
 test :: Effect Unit
 test = do
-  log "Uncomment lines step by step. IMPLEMENT BY HAND missing functions !!! No further imports are necessary!"
+  log "Uncomment each line. IMPLEMENT missing functions BY HAND !!! No further imports!"
   -- log $ show $ Just 5 == Just 5                            -- true
   -- log $ show $ Just 5 == Just 2                            -- false
   -- log $ show $ Just 5 == Nothing                           -- false

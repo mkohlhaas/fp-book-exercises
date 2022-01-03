@@ -1,24 +1,31 @@
 module Ch07a2 where
 
-import Prelude        (Unit)
+import Prelude        (Unit, discard, (<>))
 import Effect         (Effect)
 import Effect.Console (log)
 
+-------------------- JS Primitives --------------------------------------------------------
+foreign import ordIntImpl     :: Ordering -> Ordering -> Ordering -> Int -> Int -> Ordering
+foreign import eqIntImpl      :: Int -> Int -> Boolean
+foreign import showIntImpl    :: Int -> String
+foreign import showStringImpl :: String -> String
+
+-------------------- Tests ----------------------------------------------------------------
 test :: Effect Unit
 test = do
-  log "Uncomment lines step by step. DERIVE missing functions !!!"
-  -- log $ show $ Just 5 == Just 5
-  -- log $ show $ Just 5 == Just 2
-  -- log $ show $ Just 5 == Nothing
-  -- log $ show $ Nothing == Just 5
-  -- log $ show $ Nothing == Nothing
-  -- log $ show $ Left "left"
-  -- log $ show $ Right (Just 42)
-  -- log $ show $ Just 1 < Just 5
-  -- log $ show $ Just 5 <= Just 5
-  -- log $ show $ Just 5 > Just 10
-  -- log $ show $ Just 10 >= Just 10
-  -- log $ show $ Just 99 > Nothing
-  -- log $ show $ Just 99 < Nothing
-  -- log $ show $ Just "abc"
-  -- log $ show $ Nothing
+  log "Uncomment each line. DERIVE missing functions !!! No further imports!"
+  -- log $ show $ Just 5 == Just 5                            -- true
+  -- log $ show $ Just 5 == Just 2                            -- false
+  -- log $ show $ Just 5 == Nothing                           -- false
+  -- log $ show $ Nothing == Just 5                           -- false
+  -- log $ show $ Nothing == Nothing                          -- true
+  -- log $ show $ Left "left"                                 -- (Left "left")
+  -- log $ show $ Right (Just 42)                             -- (Right (Just 42))
+  -- log $ show $ Just 1 < Just 5                             -- true
+  -- log $ show $ Just 5 <= Just 5                            -- true
+  -- log $ show $ Just 5 > Just 10                            -- false
+  -- log $ show $ Just 10 >= Just 10                          -- true
+  -- log $ show $ Just 99 > Nothing                           -- true
+  -- log $ show $ Just 99 < Nothing                           -- false
+  -- log $ show $ Just "abc"                                  -- (Just "abc")
+  -- log $ show $ Nothing                                     -- Nothing
