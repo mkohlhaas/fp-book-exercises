@@ -5,10 +5,10 @@ import Effect         (Effect)
 import Effect.Console (log)
 
 -------------------- JS Primitives --------------------------------------------------------
-foreign import ordIntImpl     :: Ordering -> Ordering -> Ordering -> Int -> Int -> Ordering
-foreign import eqIntImpl      :: Int -> Int -> Boolean
-foreign import showIntImpl    :: Int -> String
-foreign import showStringImpl :: String -> String
+-- foreign import ordIntImpl     :: Ordering -> Ordering -> Ordering -> Int -> Int -> Ordering
+-- foreign import eqIntImpl      :: Int -> Int -> Boolean
+-- foreign import showIntImpl    :: Int -> String
+-- foreign import showStringImpl :: String -> String
 
 -------------------- Tests ----------------------------------------------------------------
 test :: Effect Unit

@@ -7,8 +7,8 @@ import Effect.Console (log)
 class ToCSV a where
   toCSV :: a -> CSV
 
-class FromCSV a where
-  fromCSV :: CSV -> Maybe a
+-- class FromCSV a where
+--   fromCSV :: CSV -> Maybe a
 
 newtype CSV         = CSV String
 newtype FullName    = FullName String
