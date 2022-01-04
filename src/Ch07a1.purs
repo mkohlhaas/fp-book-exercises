@@ -15,7 +15,7 @@ data Ordering = DontKnow
 -------------------- Tests --------------------------------------------------------------------------
 test :: Effect Unit
 test = do
-  log "Uncomment each line. IMPLEMENT missing functions BY HAND !!!"
+  log "Chapter 7a1. Uncomment each line. IMPLEMENT missing functions BY HAND !!!"
   -- log $ show $ Just 5  == Just 5                           -- true
   -- log $ show $ Just 5  == Just 2                           -- false
   -- log $ show $ Just 5  == Nothin                           -- false

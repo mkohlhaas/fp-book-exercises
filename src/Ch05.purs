@@ -7,7 +7,7 @@ import Effect.Console (log)
 -------------------- Tests ----------------------------------------------------------------------------------------------------------------------------
 test :: Effect Unit
 test = do
-  log "Uncomment lines step by step. Implement/import missing functions and all the rest ..."
+  log "Chapter 5. Uncomment lines step by step. Implement/import missing functions and all the rest ..."
   -- log (show ((flip const 1 2) == 2))
   -- log $ show $ (flip const 1 2)                                                           == 2
   -- (flip const 1 2) == 2 # show # log

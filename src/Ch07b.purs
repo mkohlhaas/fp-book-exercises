@@ -19,7 +19,7 @@ data    Person      = Person { name :: FullName , age :: Age , occupation :: Occ
 -------------------- Tests --------------------------------------------------------------------------------------------------------
 test :: Effect Unit
 test = do
-  log "Uncomment each line. Implement/import missing functions and all the rest ..."
+  log "Chapter 7b. Uncomment each line. Implement/import missing functions and all the rest ..."
   -- log $ show $ toCSV (Person { name: FullName "Sue Smith" , age: Age 23 , occupation: Doctor }) -- "Sue Smith,23,Doctor"
   -- log $ show $ toCSV (Person { name: FullName "Sue Smith" , age: Age 23 , occupation: Doctor }) == CSV "Sue Smith,23,Doctor"
   -- let person = Person { name: FullName "Sue Smith" , age: Age 23 , occupation: Doctor }

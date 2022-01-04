@@ -10,7 +10,7 @@ import Effect.Console    (log)
 -------------------- Tests ----------------------------------------------------------------
 test :: Effect Unit
 test = do
-  log "Uncomment each line. DERIVE missing functions !!!"
+  log "Chapter 7a2. Uncomment each line. DERIVE missing functions !!!"
   -- log $ show $ Just 5  == Just 5                           -- true
   -- log $ show $ Just 5  == Just 2                           -- false
   -- log $ show $ Just 5  == Nothing                          -- false

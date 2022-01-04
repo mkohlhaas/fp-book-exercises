@@ -49,7 +49,7 @@ verifyMod4Group = do
 ----------- Tests ------------------------------------------------------------------------
 test :: Effect Unit
 test = do
-  log "Try your best. Good luck!"
+  log "Chapter 9. Try your best. Good luck!"
   -- log $ show $ ATrue  <> ATrue                                   -- ATrue
   -- log $ show $ ATrue  <> AFalse                                  -- AFalse
   -- log $ show $ AFalse <> AFalse                                  -- AFalse
