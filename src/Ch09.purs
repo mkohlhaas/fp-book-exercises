@@ -1,0 +1,68 @@
+module Ch09 where
+
+import Prelude        (Unit)
+import Effect         (Effect)
+import Effect.Console (log)
+
+data AndBool = AFalse | ATrue
+data OrBool  = OFalse | OTrue
+data Mod4    = Zero   | One   | Two | Three
+-- newtype First a = First (Maybe a)  -- prefer first Maybe with value
+-- newtype Last  a = Last  (Maybe a)  -- prefer last  Maybe with value
+
+-- Verification --
+verifyAndBoolSemigroup :: Effect Unit
+verifyAndBoolSemigroup = do
+  log "Verifying AndBool Semigroup Laws"
+  -- log $ show $ ...
+
+verifyAndBoolMonoid :: Effect Unit
+verifyAndBoolMonoid = do
+  log "Verifying AndBool Monoid Laws"
+  -- log $ show $ ...
+
+verifyOrBoolSemigroup :: Effect Unit
+verifyOrBoolSemigroup = do
+  log "Verifying OrBool Semigroup Laws"
+  -- log $ show $ ...
+
+verifyOrBoolMonoid :: Effect Unit
+verifyOrBoolMonoid = do
+  log "Verifying OrBool Monoid Laws"
+  -- log $ show $ ...
+
+verifyMod4Semigroup :: Effect Unit
+verifyMod4Semigroup = do
+  log "Verifying Mod4 Semigroup Laws"
+  -- log $ show $ ...
+
+verifyMod4Monoid :: Effect Unit
+verifyMod4Monoid = do
+  log "Verifying Mod4 Monoid Laws"
+  -- log $ show $ ...
+
+verifyMod4Group :: Effect Unit
+verifyMod4Group = do
+  log "Verifying Mod4 Group Laws"
+  -- log $ show $ ...
+
+----------- Tests ------------------------------------------------------------------------
+test :: Effect Unit
+test = do
+  log "Try your best. Good luck!"
+  -- log $ show $ ATrue  <> ATrue                                   -- ATrue
+  -- log $ show $ ATrue  <> AFalse                                  -- AFalse
+  -- log $ show $ AFalse <> AFalse                                  -- AFalse
+  -- log $ show $ AFalse <> mempty                                  -- AFalse
+  -- log $ show $ ATrue  <> mempty                                  -- AFalse
+  -- log $ show $ mempty <> ATrue  == ATrue                         -- true
+  -- log $ show $ mempty <> AFalse == ATrue                         -- false
+  -- verifyAndBoolSemigroup
+  -- verifyAndBoolMonoid
+  -- verifyOrBoolSemigroup
+  -- verifyOrBoolMonoid
+  -- verifyMod4Semigroup
+  -- verifyMod4Monoid
+  -- verifyMod4Group
+  -- log $ show $ First Nothing <> First (Just 77)                  -- (First (Just 77))
+  -- log $ show $ Last (Just 1) <> Last (Just 99)                   -- (Last (Just 99))

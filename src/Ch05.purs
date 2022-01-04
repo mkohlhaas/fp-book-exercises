@@ -4,6 +4,7 @@ import Prelude        (Unit)
 import Effect         (Effect)
 import Effect.Console (log)
 
+-------------------- Tests ----------------------------------------------------------------------------------------------------------------------------
 test :: Effect Unit
 test = do
   log "Uncomment lines step by step. Implement/import missing functions and all the rest ..."

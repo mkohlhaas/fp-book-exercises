@@ -16,6 +16,7 @@ newtype Age         = Age Int
 data    Occupation  = Doctor | Dentist | Lawyer | Unemployed
 data    Person      = Person { name :: FullName , age :: Age , occupation :: Occupation }
 
+-------------------- Tests --------------------------------------------------------------------------------------------------------
 test :: Effect Unit
 test = do
   log "Uncomment each line. Implement/import missing functions and all the rest ..."
