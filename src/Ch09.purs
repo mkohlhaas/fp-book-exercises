@@ -54,7 +54,7 @@ test = do
   -- log $ show $ ATrue  <> AFalse                                  -- AFalse
   -- log $ show $ AFalse <> AFalse                                  -- AFalse
   -- log $ show $ AFalse <> mempty                                  -- AFalse
-  -- log $ show $ ATrue  <> mempty                                  -- AFalse
+  -- log $ show $ ATrue  <> mempty                                  -- ATrue
   -- log $ show $ mempty <> ATrue  == ATrue                         -- true
   -- log $ show $ mempty <> AFalse == ATrue                         -- false
   -- verifyAndBoolSemigroup
