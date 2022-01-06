@@ -6,3 +6,4 @@ Possible Solutions:
 - [Chapter 7b](https://gist.github.com/mkohlhaas/a936771698944e6242306ec73437f75b)
 - [Chapter 9](https://gist.github.com/mkohlhaas/d6fd482f6f63d8571e62c5c6a923122d)
 - [Chapter 11](https://gist.github.com/mkohlhaas/bb64df9da5e966771e7245b33815cb20)
+- [Chapter 13](https://gist.github.com/mkohlhaas/942c3de7ff100a9617ca981aec07ec6b)
