@@ -31,6 +31,7 @@ import Effect.Console (log)
 
 {-
  Validation
+
  • Derive a Newtype Instance
  • Derive Functor Instance
  • Derive Bifunctor Instance
@@ -39,28 +40,29 @@ import Effect.Console (log)
  • Derive Show Instance
 -}
 
-newtype Validation err result = Validation (Either err result)
+-- newtype Validation err result = Validation (Either err result)
 
 test :: Effect Unit
 test = do
-  log "Writing Applicative Instance for Maybe"
-  log $ show $ (+) <$> Just 21 <*> Just 21
-  log $ show $ (*) <$> pure 2 <*> (pure 21 :: Maybe Int)
-  log $ show $ pure (+) <*> Just 17 <*> Just 25
-  log "Writing Applicative Instance for Either"
-  -- Associative Composition Law: (<<<) <$> u <*> v <*> w = u <*> (v <*> w)
-  log $ show $ ((<<<) <$> pure identity <*> pure identity <*> pure 1) == (pure identity <*> (pure identity <*> pure 1) :: Either Unit Int)
-  -- Identity Law:                pure identity <*> x = x
-  log $ show $ (pure identity <*> pure 1) == (pure 1 :: Either Unit Int)
-  -- Homomorphism Law:            pure (f x) = pure f <*> pure x
-  log $ show $ pure (negate 1) == (pure negate <*> pure 1 :: Either Unit Int)
-  -- Interchange Law:             u <*> pure x = pure (_ $ x) <*> u
-  log $ show $ (pure negate <*> pure 1) == (pure (_ $ 1) <*> pure negate :: Either Unit Int)
-  log "Using Validation"
-  log $ show age  -- 10
-  log $ show age' -- (Age' 10)
-  log $ show $ createFamilyAges { fatherAge: Age 40,  motherAge: Age 30,  childAge: Age 10  }
-  log $ show $ createFamilyAges { fatherAge: Age 400, motherAge: Age 300, childAge: Age 0   }
-  log $ show $ createFamilyAges { fatherAge: Age 4,   motherAge: Age 3,   childAge: Age 10  }
-  log $ show $ createFamilyAges { fatherAge: Age 40,  motherAge: Age 30,  childAge: Age 100 }
-  log $ show $ createFamilyAges { fatherAge: Age 40,  motherAge: Age 3,   childAge: Age 0   }
+  log $ "Ch. 17 Applicatives. Just follow the white rabbit."
+  -- log "Writing Applicative Instance for Maybe"
+  -- log $ show $ (+) <$> Just 21 <*> Just 21
+  -- log $ show $ (*) <$> pure 2 <*> (pure 21 :: Maybe Int)
+  -- log $ show $ pure (+) <*> Just 17 <*> Just 25
+  -- log "Writing Applicative Instance for Either"
+  -- -- Associative Composition Law: (<<<) <$> u <*> v <*> w = u <*> (v <*> w)
+  -- log $ show $ ((<<<) <$> pure identity <*> pure identity <*> pure 1) == (pure identity <*> (pure identity <*> pure 1) :: Either Unit Int)
+  -- -- Identity Law:                pure identity <*> x = x
+  -- log $ show $ (pure identity <*> pure 1) == (pure 1 :: Either Unit Int)
+  -- -- Homomorphism Law:            pure (f x) = pure f <*> pure x
+  -- log $ show $ pure (negate 1) == (pure negate <*> pure 1 :: Either Unit Int)
+  -- -- Interchange Law:             u <*> pure x = pure (_ $ x) <*> u
+  -- log $ show $ (pure negate <*> pure 1) == (pure (_ $ 1) <*> pure negate :: Either Unit Int)
+  -- log "Using Validation"
+  -- log $ show age  -- 10
+  -- log $ show age' -- (Age' 10)
+  -- log $ show $ createFamilyAges { fatherAge: Age 40,  motherAge: Age 30,  childAge: Age 10  }
+  -- log $ show $ createFamilyAges { fatherAge: Age 400, motherAge: Age 300, childAge: Age 0   }
+  -- log $ show $ createFamilyAges { fatherAge: Age 4,   motherAge: Age 3,   childAge: Age 10  }
+  -- log $ show $ createFamilyAges { fatherAge: Age 40,  motherAge: Age 30,  childAge: Age 100 }
+  -- log $ show $ createFamilyAges { fatherAge: Age 40,  motherAge: Age 3,   childAge: Age 0   }
