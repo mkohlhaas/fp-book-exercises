@@ -1,4 +1,4 @@
-module Parser where
+module Ch17Parser where
 
 import Prelude
 -- import Data.Either    (Either)
@@ -13,7 +13,7 @@ import Effect.Console (log)
 
 test :: Effect Unit
 test = do
-  log $ "Ch. 17 Parser"
+  log "Ch. 17 Parser."
   -- log $ show $ parse  char       "ABC"                          -- (Right (Tuple "BC" 'A')).
   -- log $ show $ parse  twoChars   "ABC"                          -- (Right (Tuple "C" (Tuple 'A' 'B'))).
   -- log $ show $ parse  threeChars "ABC"                          -- (Right (Tuple "" "ABC")).

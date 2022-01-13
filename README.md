@@ -8,3 +8,4 @@ Possible Solutions:
 - [Chapter 11](https://gist.github.com/mkohlhaas/bb64df9da5e966771e7245b33815cb20)
 - [Chapter 13](https://gist.github.com/mkohlhaas/942c3de7ff100a9617ca981aec07ec6b)
 - [Chapter 15](https://gist.github.com/mkohlhaas/08636cbc9369d3eb9cee268ed05e556f)
+- [Chapter 17](https://gist.github.com/mkohlhaas/e88eaa39b543eb0cde55613cfaf26f53)
