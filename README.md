@@ -9,3 +9,4 @@ Possible Solutions:
 - [Chapter 13](https://gist.github.com/mkohlhaas/942c3de7ff100a9617ca981aec07ec6b)
 - [Chapter 15](https://gist.github.com/mkohlhaas/08636cbc9369d3eb9cee268ed05e556f)
 - [Chapter 17](https://gist.github.com/mkohlhaas/e88eaa39b543eb0cde55613cfaf26f53)
+- [Chapter 17 Associative Parser](https://gist.github.com/mkohlhaas/9a95bb13469bf87ccc58c6da6a5e861a)
