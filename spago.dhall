@@ -1,5 +1,5 @@
 { name = "my-project"
-, dependencies = [ "console", "effect", "prelude", "psci-support" ]
+, dependencies = [ "console", "effect", "prelude", "psci-support", "either", "tuples", "maybe", "strings", "arrays", "foldable-traversable", "unicode", "control" ]
 , packages = ./packages.dhall
 , sources = [ "src/**/*.purs", "test/**/*.purs" ]
 }
