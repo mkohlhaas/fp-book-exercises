@@ -15,7 +15,7 @@ import Effect  (Effect)
 -- import Ch17Parser     as P
 -- import Ch19           as Ch19
 -- import Ch19Parser     as P1
-import Ch19DateParser as P2
+import Ch19DateParser as DP
 
 main :: Effect Unit
-main = P2.test
+main = DP.test

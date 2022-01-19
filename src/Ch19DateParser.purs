@@ -2,7 +2,7 @@ module Ch19DateParser where
 
 import Prelude
 import Control.Alt (class Alt, (<|>))
-import Data.Array as A
+import Data.Array (cons)
 import Data.CodePoint.Unicode (isDecDigit, isAlpha)
 import Data.Either (Either(..))
 import Data.Generic.Rep (class Generic)
@@ -10,8 +10,9 @@ import Data.Maybe (Maybe(..))
 import Data.Show.Generic (genericShow)
 import Data.String.CodePoints (codePointFromChar)
 import Data.String.CodeUnits (uncons, fromCharArray)
-import Data.Traversable (sequence)
+import Data.Traversable (class Traversable, sequence)
 import Data.Tuple (Tuple(..))
+import Data.Unfoldable (class Unfoldable, none, replicate)
 import Effect (Effect)
 import Effect.Console (log)
 
@@ -94,10 +95,10 @@ char =
     Nothing -> Left eof
     Just { head, tail } -> Right $ Tuple tail head
 
-count :: ∀ e a. Int -> Parser e a -> Parser e (Array a)
+count :: ∀ e a f. Traversable f => Unfoldable f => Int -> Parser e a -> Parser e (f a)
 count n p
-  | n < 0 = pure []
-  | otherwise = sequence (A.replicate n p)
+  | n < 0 = pure none
+  | otherwise = sequence (replicate n p)
 
 count' :: ∀ e. Int -> Parser e Char -> Parser e String
 count' n p = fromCharArray <$> count n p
@@ -120,6 +121,48 @@ alphaNum = letter <|> digit <|> fail (invalidChar "alphaNum")
 -----------------
 -- Date Parser --
 -----------------
+newtype Year
+  = Year Int
+
+newtype Month
+  = Month Int
+
+newtype Day
+  = Day Int
+
+data DateFormat
+  = YearFirst
+  | MonthFirst
+
+type DateParts
+  = { year :: Year, month :: Month, day :: Day, format :: DateFormat }
+
+atMost :: ∀ e f a. Unfoldable f => (a -> f a -> f a) -> Int -> Parser e a -> Parser e (f a)
+atMost cons n p
+  | n <= 0 = pure none
+  | otherwise = optional none $ p >>= \c -> cons c <$> atMost cons (n - 1) p
+
+-- atMost :: ∀ e a. Int -> Parser e a -> Parser e (Array a)
+-- atMost n p
+--   | n <= 0 = pure []
+--   | otherwise = optional [] $ p >>= \c -> cons c <$> atMost (n - 1) p
+atMost' :: ∀ e. Int -> Parser e Char -> Parser e String
+atMost' n p = fromCharArray <$> atMost cons n p
+
+optional :: ∀ e a. a -> Parser e a -> Parser e a
+optional x p = p <|> pure x
+
+range :: ∀ e f a. Semigroup (f a) => Traversable f => Unfoldable f => (a -> f a -> f a) -> Int -> Int -> Parser e a -> Parser e (f a)
+range cons min max p
+  | min > max, min < 0, max <= 0 = pure none
+  | otherwise = count min p >>= \cs -> (cs <> _) <$> atMost cons (max - min) p
+
+range' :: ∀ e. Int -> Int -> Parser e Char -> Parser e String
+range' min max p = fromCharArray <$> range cons min max p
+
 test :: Effect Unit
 test = do
   log "Ch. 19 Date Parser."
+  log $ show $ parse' (atMost' (-2) alphaNum) "a1b2c3" -- (Right (Tuple "a1b2c3" ""))
+  log $ show $ parse' (atMost' 2 alphaNum) "$_$" -- (Right (Tuple "$_$" ""))
+  log $ show $ parse' (atMost' 2 alphaNum) "a1b2c3" -- (Right (Tuple "b2c3" "a1"))
