@@ -6,7 +6,8 @@ import Data.Array (cons)
 import Data.CodePoint.Unicode (isDecDigit, isAlpha)
 import Data.Either (Either(..))
 import Data.Generic.Rep (class Generic)
-import Data.Maybe (Maybe(..))
+import Data.Int (fromString)
+import Data.Maybe (Maybe(..), fromMaybe)
 import Data.Show.Generic (genericShow)
 import Data.String.CodePoints (codePointFromChar)
 import Data.String.CodeUnits (uncons, fromCharArray)
@@ -137,6 +138,13 @@ data DateFormat
 type DateParts
   = { year :: Year, month :: Month, day :: Day, format :: DateFormat }
 
+derive newtype instance showYear :: Show Year
+derive newtype instance showMonth :: Show Month
+derive newtype instance showDay :: Show Day
+derive instance genericDateFormat :: Generic DateFormat _
+instance showDateFormat :: Show DateFormat where
+  show = genericShow
+
 atMost :: ∀ e f a. Unfoldable f => (a -> f a -> f a) -> Int -> Parser e a -> Parser e (f a)
 atMost cons n p
   | n <= 0 = pure none
@@ -160,9 +168,47 @@ range cons min max p
 range' :: ∀ e. Int -> Int -> Parser e Char -> Parser e String
 range' min max p = fromCharArray <$> range cons min max p
 
+constChar :: ∀ e. ParserError e => Char -> Parser e Unit
+constChar c = void $ satisfy (show c) (_ == c)
+
+digitsToNum :: String -> Int
+digitsToNum = fromMaybe 0 <<< fromString
+
+-- 1962-10-02
+yearFirst :: ∀ e. ParserError e => Parser e DateParts
+yearFirst = do
+  year <- Year <<< digitsToNum <$> count' 4 digit
+  constChar '-'
+  month <- Month <<< digitsToNum <$> range' 1 2 digit
+  constChar '-'
+  day <- Day <<< digitsToNum <$> range' 1 2 digit
+  pure {year, month, day, format: YearFirst}
+
+-- 10/2/1962
+monthFirst :: ∀ e. ParserError e => Parser e DateParts
+monthFirst = do
+  month <- Month <<< digitsToNum <$> range' 1 2 digit
+  constChar '/'
+  day <- Day <<< digitsToNum <$> range' 1 2 digit
+  constChar '/'
+  year <- Year <<< digitsToNum <$> count' 4 digit
+  pure {year, month, day, format: MonthFirst}
+
+date :: ∀ e. ParserError e => Parser e DateParts
+date = yearFirst <|> monthFirst
+
 test :: Effect Unit
 test = do
   log "Ch. 19 Date Parser."
   log $ show $ parse' (atMost' (-2) alphaNum) "a1b2c3" -- (Right (Tuple "a1b2c3" ""))
   log $ show $ parse' (atMost' 2 alphaNum) "$_$" -- (Right (Tuple "$_$" ""))
   log $ show $ parse' (atMost' 2 alphaNum) "a1b2c3" -- (Right (Tuple "b2c3" "a1"))
+  log $ show $ parse' yearFirst "1962-10-02"
+  log $ show $ parse' monthFirst "10/2/1962"
+  log $ show $ parse' yearFirst "1999-12-31"
+  log $ show $ parse' monthFirst "12/31/1999"
+  log $ show $ parse' date "1962-10-02"
+  log $ show $ parse' date "10/2/1962"
+  log $ show $ parse' date "1999-12-31"
+  log $ show $ parse' date "12/31/1999"
+
