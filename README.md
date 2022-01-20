@@ -12,3 +12,4 @@ Possible Solutions:
 - [Chapter 17 Associative Parser](https://gist.github.com/mkohlhaas/9a95bb13469bf87ccc58c6da6a5e861a)
 - [Chapter 19](https://gist.github.com/mkohlhaas/6edfe4216e6c2cec91ff4942ebcc91a8)
 - [Chapter 19 Monadic Parser](https://gist.github.com/mkohlhaas/f5b0d90e54650047f9a7aea686fb8582)
+- [Chapter 19 Date Parser](https://gist.github.com/mkohlhaas/ec9c443f3be50bfab9d995fea4d8a5f2)

@@ -2,12 +2,10 @@ module Ch19DateParser where
 
 import Prelude
 import Control.Alt (class Alt, (<|>))
-import Data.Array (cons)
 import Data.CodePoint.Unicode (isDecDigit, isAlpha)
 import Data.Either (Either(..))
 import Data.Generic.Rep (class Generic)
-import Data.Int (fromString)
-import Data.Maybe (Maybe(..), fromMaybe)
+import Data.Maybe (Maybe(..))
 import Data.Show.Generic (genericShow)
 import Data.String.CodePoints (codePointFromChar)
 import Data.String.CodeUnits (uncons, fromCharArray)
@@ -138,77 +136,54 @@ data DateFormat
 type DateParts
   = { year :: Year, month :: Month, day :: Day, format :: DateFormat }
 
-derive newtype instance showYear :: Show Year
-derive newtype instance showMonth :: Show Month
-derive newtype instance showDay :: Show Day
-derive instance genericDateFormat :: Generic DateFormat _
-instance showDateFormat :: Show DateFormat where
-  show = genericShow
+-- Derive Show instances for the above data types
 
-atMost :: ∀ e f a. Unfoldable f => (a -> f a -> f a) -> Int -> Parser e a -> Parser e (f a)
-atMost cons n p
-  | n <= 0 = pure none
-  | otherwise = optional none $ p >>= \c -> cons c <$> atMost cons (n - 1) p
-
+-- create a function that parses at most a specified count
 -- atMost :: ∀ e a. Int -> Parser e a -> Parser e (Array a)
--- atMost n p
---   | n <= 0 = pure []
---   | otherwise = optional [] $ p >>= \c -> cons c <$> atMost (n - 1) p
-atMost' :: ∀ e. Int -> Parser e Char -> Parser e String
-atMost' n p = fromCharArray <$> atMost cons n p
 
-optional :: ∀ e a. a -> Parser e a -> Parser e a
-optional x p = p <|> pure x
+-- generalize atMost on Array
+-- atMost :: ∀ e f a. Unfoldable f => (a -> f a -> f a) -> Int -> Parser e a -> Parser e (f a)
 
-range :: ∀ e f a. Semigroup (f a) => Traversable f => Unfoldable f => (a -> f a -> f a) -> Int -> Int -> Parser e a -> Parser e (f a)
-range cons min max p
-  | min > max, min < 0, max <= 0 = pure none
-  | otherwise = count min p >>= \cs -> (cs <> _) <$> atMost cons (max - min) p
+-- specialize atMost; use String instead of Array
+-- atMost' :: ∀ e. Int -> Parser e Char -> Parser e String
 
-range' :: ∀ e. Int -> Int -> Parser e Char -> Parser e String
-range' min max p = fromCharArray <$> range cons min max p
+-- create a parser that returns a default in case of a failing parser
+-- optional :: ∀ e a. a -> Parser e a -> Parser e a
 
-constChar :: ∀ e. ParserError e => Char -> Parser e Unit
-constChar c = void $ satisfy (show c) (_ == c)
+-- write a generic function that parses a min and max amount of parses with a given parser
+-- range :: ∀ e f a. Semigroup (f a) => Traversable f => Unfoldable f => (a -> f a -> f a) -> Int -> Int -> Parser e a -> Parser e (f a)
 
-digitsToNum :: String -> Int
-digitsToNum = fromMaybe 0 <<< fromString
+-- specialize range for String
+-- range' :: ∀ e. Int -> Int -> Parser e Char -> Parser e String
 
--- 1962-10-02
-yearFirst :: ∀ e. ParserError e => Parser e DateParts
-yearFirst = do
-  year <- Year <<< digitsToNum <$> count' 4 digit
-  constChar '-'
-  month <- Month <<< digitsToNum <$> range' 1 2 digit
-  constChar '-'
-  day <- Day <<< digitsToNum <$> range' 1 2 digit
-  pure {year, month, day, format: YearFirst}
+-- write a Parser that parses a character but does not return anything
+-- constChar :: ∀ e. ParserError e => Char -> Parser e Unit
 
--- 10/2/1962
-monthFirst :: ∀ e. ParserError e => Parser e DateParts
-monthFirst = do
-  month <- Month <<< digitsToNum <$> range' 1 2 digit
-  constChar '/'
-  day <- Day <<< digitsToNum <$> range' 1 2 digit
-  constChar '/'
-  year <- Year <<< digitsToNum <$> count' 4 digit
-  pure {year, month, day, format: MonthFirst}
+-- write a function that takes a String and return its integer value
+-- digitsToNum :: String -> Int
 
-date :: ∀ e. ParserError e => Parser e DateParts
-date = yearFirst <|> monthFirst
+-- write a parser that can parse dates in the following format: YYYY-MM-DD, M and D could be single chars
+-- 1962-10-02, 1962-10-2, 1962-9-2, ...
+-- yearFirst :: ∀ e. ParserError e => Parser e DateParts
+
+-- same for different date format: MM/DD/YYYY
+-- 10/02/1962, 10/2/1962, 9/2/1962, ...
+-- monthFirst :: ∀ e. ParserError e => Parser e DateParts
+
+-- create a parser that can parse both date formats
+-- date :: ∀ e. ParserError e => Parser e DateParts
 
 test :: Effect Unit
 test = do
   log "Ch. 19 Date Parser."
-  log $ show $ parse' (atMost' (-2) alphaNum) "a1b2c3" -- (Right (Tuple "a1b2c3" ""))
-  log $ show $ parse' (atMost' 2 alphaNum) "$_$" -- (Right (Tuple "$_$" ""))
-  log $ show $ parse' (atMost' 2 alphaNum) "a1b2c3" -- (Right (Tuple "b2c3" "a1"))
-  log $ show $ parse' yearFirst "1962-10-02"
-  log $ show $ parse' monthFirst "10/2/1962"
-  log $ show $ parse' yearFirst "1999-12-31"
-  log $ show $ parse' monthFirst "12/31/1999"
-  log $ show $ parse' date "1962-10-02"
-  log $ show $ parse' date "10/2/1962"
-  log $ show $ parse' date "1999-12-31"
-  log $ show $ parse' date "12/31/1999"
-
+  -- log $ show $ parse' (atMost' (-2) alphaNum) "a1b2c3" -- (Right (Tuple "a1b2c3" ""))
+  -- log $ show $ parse' (atMost' 2 alphaNum) "$_$" -- (Right (Tuple "$_$" ""))
+  -- log $ show $ parse' (atMost' 2 alphaNum) "a1b2c3" -- (Right (Tuple "b2c3" "a1"))
+  -- log $ show $ parse' yearFirst "1962-10-02"
+  -- log $ show $ parse' monthFirst "10/2/1962"
+  -- log $ show $ parse' yearFirst "1999-12-31"
+  -- log $ show $ parse' monthFirst "12/31/1999"
+  -- log $ show $ parse' date "1962-10-02"
+  -- log $ show $ parse' date "10/2/1962"
+  -- log $ show $ parse' date "1999-12-31"
+  -- log $ show $ parse' date "12/31/1999"
