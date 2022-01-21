@@ -76,8 +76,8 @@ instance monadParser :: Monad (Parser e)
 instance altParser :: Alt (Parser e) where
   alt p1 p2 =
     Parser \s -> case parse p1 s of
-      Right x -> Right x
       Left _ -> parse p2 s
+      Right x -> Right x
 
 ----------------------
 -- Using the Parser --
@@ -120,6 +120,11 @@ alphaNum = letter <|> digit <|> fail (invalidChar "alphaNum")
 -----------------
 -- Date Parser --
 -----------------
+
+-- Keep in mind that these are the parts that we parsed out of a String. This is not guaranteed to be a valid
+-- date. That’s beyond the scope of this problem. In the real world, we’d first parse the date and then use a
+-- date library to do the hard work of validation for us.
+
 newtype Year
   = Year Int
 
@@ -136,31 +141,43 @@ data DateFormat
 type DateParts
   = { year :: Year, month :: Month, day :: Day, format :: DateFormat }
 
--- Derive Show instances for the above data types
+-- Derive Show instances for the data types above
+
+----------------------
+-- Helper Functions --
+----------------------
+
+-- create a parser that always succeeds and returns a default in case of a failing parser
+-- optional :: ∀ e a. a -> Parser e a -> Parser e a
 
 -- create a function that parses at most a specified count
 -- atMost :: ∀ e a. Int -> Parser e a -> Parser e (Array a)
 
--- generalize atMost on Array
--- atMost :: ∀ e f a. Unfoldable f => (a -> f a -> f a) -> Int -> Parser e a -> Parser e (f a)
-
 -- specialize atMost; use String instead of Array
 -- atMost' :: ∀ e. Int -> Parser e Char -> Parser e String
 
--- create a parser that returns a default in case of a failing parser
--- optional :: ∀ e a. a -> Parser e a -> Parser e a
+-- generalize atMost on Array an pass a cons-like function to it (bc there isn't in the standard library for Unfoldable)
+-- comment out the previous version
+-- atMost :: ∀ e f a. Unfoldable f => (a -> f a -> f a) -> Int -> Parser e a -> Parser e (f a)
 
 -- write a generic function that parses a min and max amount of parses with a given parser
--- range :: ∀ e f a. Semigroup (f a) => Traversable f => Unfoldable f => (a -> f a -> f a) -> Int -> Int -> Parser e a -> Parser e (f a)
+-- range :: ∀ e a. Int -> Int -> Parser e a -> Parser e (Array a)
 
--- specialize range for String
+-- specialize range for String the same way you did with atMost
 -- range' :: ∀ e. Int -> Int -> Parser e Char -> Parser e String
+
+-- generalize range the same way you did with atMost
+-- range :: ∀ e f a. Semigroup (f a) => Traversable f => Unfoldable f => (a -> f a -> f a) -> Int -> Int -> Parser e a -> Parser e (f a)
 
 -- write a Parser that parses a character but does not return anything
 -- constChar :: ∀ e. ParserError e => Char -> Parser e Unit
 
 -- write a function that takes a String and return its integer value
 -- digitsToNum :: String -> Int
+
+----------------------
+-- Two Date Parsers --
+----------------------
 
 -- write a parser that can parse dates in the following format: YYYY-MM-DD, M and D could be single chars
 -- 1962-10-02, 1962-10-2, 1962-9-2, ...
@@ -169,6 +186,10 @@ type DateParts
 -- same for different date format: MM/DD/YYYY
 -- 10/02/1962, 10/2/1962, 9/2/1962, ...
 -- monthFirst :: ∀ e. ParserError e => Parser e DateParts
+
+-------------------------
+-- Generic Date Parser --
+-------------------------
 
 -- create a parser that can parse both date formats
 -- date :: ∀ e. ParserError e => Parser e DateParts

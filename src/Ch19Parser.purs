@@ -13,9 +13,9 @@ import Effect                 (Effect)
 import Effect.Console         (log)
 
 -- The Parsing State is going to need to be passed from Parser to Parser, i.e. when the current Parser is done,
--- it passes what’s left of the String to the next Parser who takes a stab at parsing what’s left. Also, if a
--- single Parser in the chain were to fail, we want to short-circuit the parsing and return the error, hopefully
--- with some useful information as to what went wrong.
+-- it passes what’s left of the String to the next Parser who takes a stab at parsing what's left. Also, if a
+-- single Parser in the chain were to fail, we want to short-circuit the parsing and return the error with
+-- some useful information as to what went wrong.
 
 ------------------------------
 -- Data Types and Type Classes
@@ -95,13 +95,12 @@ tenCharsA = (\c1 c2 c3 c4 c5 c6 c7 c8 c9 c10 -> fromCharArray [c1, c2, c3, c4, c
 -- Write a parser that always fails; only parameter is a ParseError
 -- Write a Char-parser called digit parser based on satisfy using isDecDigit from a PureScript library
 -- Write a Char-parser called letter parser (use isAlpha)
--- Write an alphanum parser using the digit and letter parsers
+-- Write an alphanum parser using the digit and letter parsers. Make sure it provides a meaningful error message.
+-- Write a count' function that leverages count (from Ch. 17) and creates a parsed String as output.
 
 count :: ∀ e a. Int -> Parser e a -> Parser e (Array a)
 count n p | n < 0     = pure []
           | otherwise = sequence (A.replicate n p)
-
--- Write a count'' function that leverages count and creates a String as output
 
 test :: Effect Unit
 test = do
@@ -121,8 +120,6 @@ test = do
   -- log $ show $ parse'  threeCharsA'' "ABC"                                               -- (Right (Tuple "" "ABC"))
   -- log $ show $ parse'  threeCharsA   "A"                                                 -- (Left EOF)
   -- log $ show $ parse'  tenCharsA     "ABCDEFGHIJKLMNOPQRSTUVXYZ"                         -- (Right (Tuple "KLMNOPQRSTUVXYZ" "ABCDEFGHIJ"))
-  -- log $ show $ parse' (fromCharArray <$> (count  10 char)) "ABCDEFGHIJKLMNOPQRSTUVXYZ"   -- (Right (Tuple "KLMNOPQRSTUVXYZ" "ABCDEFGHIJ"))
-  -- log $ show $ parse' (fromCharArray <$> (count' 10 char)) "ABCDEFGHIJKLMNOPQRSTUVXYZ"   -- (Right (Tuple "KLMNOPQRSTUVXYZ" "ABCDEFGHIJ"))
   -- log "---------------------"
   -- log "-- Monadic Parsers --"
   -- log "---------------------"
@@ -138,8 +135,12 @@ test = do
   -- log $ show $ parse'  threeCharsB'' "ABC"                                               -- (Right (Tuple "" "ABC"))
   -- log $ show $ parse'  threeCharsB   "A"                                                 -- (Left EOF)
   -- log $ show $ parse'  tenCharsB     "ABCDEFGHIJKLMNOPQRSTUVXYZ"                         -- (Right (Tuple "KLMNOPQRSTUVXYZ" "ABCDEFGHIJ"))
-  -- log $ show $ parse' (count'' 3  digit)    "123456"                                     -- (Right (Tuple "456" "123"))
-  -- log $ show $ parse' (count'' 3  digit)    "abc456"                                     -- (Left (InvalidChar "digit"))
-  -- log $ show $ parse' (count'' 4  letter)   "Freddy"                                     -- (Right (Tuple "dy" "Fred"))
-  -- log $ show $ parse' (count'' 10 alphaNum) "a1b2c3d4e5"                                 -- (Right (Tuple "" "a1b2c3d4e5"))
-  -- log $ show $ parse' (count'' 10 alphaNum) "######"                                     -- (Left (InvalidChar "alphaNum"))
+  -- log "----------------------"
+  -- log "-- Helper Functions --"
+  -- log "----------------------"
+  -- log $ show $ parse' (fromCharArray <$> (count 10 char)) "ABCDEFGHIJKLMNOPQRSTUVXYZ"    -- (Right (Tuple "KLMNOPQRSTUVXYZ" "ABCDEFGHIJ"))
+  -- log $ show $ parse' (count' 3  digit)    "123456"                                      -- (Right (Tuple "456" "123"))
+  -- log $ show $ parse' (count' 3  digit)    "abc456"                                      -- (Left (InvalidChar "digit"))
+  -- log $ show $ parse' (count' 4  letter)   "Freddy"                                      -- (Right (Tuple "dy" "Fred"))
+  -- log $ show $ parse' (count' 10 alphaNum) "a1b2c3d4e5"                                  -- (Right (Tuple "" "a1b2c3d4e5"))
+  -- log $ show $ parse' (count' 10 alphaNum) "######"                                      -- (Left (InvalidChar "alphaNum"))
