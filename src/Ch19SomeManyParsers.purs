@@ -2,13 +2,11 @@ module Ch19SomeManyParsers where
 
 import Prelude
 import Control.Alt (class Alt, (<|>))
-import Control.Lazy (class Lazy, defer)
 import Data.Array as A
 import Data.CodePoint.Unicode (isDecDigit, isAlpha)
 import Data.Either (Either(..))
 import Data.Generic.Rep (class Generic)
 import Data.Maybe (Maybe(..))
-import Data.NonEmpty (NonEmpty, (:|), fromNonEmpty)
 import Data.Show.Generic (genericShow)
 import Data.String.CodePoints (codePointFromChar)
 import Data.String.CodeUnits (uncons, fromCharArray)
@@ -22,6 +20,7 @@ import Effect.Console (log)
 -- it passes what’s left of the String to the next Parser who takes a stab at parsing what’s left. Also, if a
 -- single Parser in the chain were to fail, we want to short-circuit the parsing and return the error, hopefully
 -- with some useful information as to what went wrong.
+
 ------------------------------
 -- Data Types and Type Classes
 ------------------------------
@@ -41,9 +40,6 @@ type ParseFunction e a
 
 newtype Parser e a
   = Parser (ParseFunction e a)
-
-data Threeple a b c
-  = Threeple a b c
 
 instance functorParser :: Functor (Parser e) where
   map f g = Parser \s -> map f <$> parse g s
@@ -155,9 +151,15 @@ constChar' c = satisfy (show c) (_ == c)
 -- many = some or none --
 -------------------------
 
--------------------------
--- some rhymes with 1  --
--------------------------
+-- PureScript is a strict language. As both parsers are defined in terms of the other
+-- write a Lazy instance for Parser. One of some or many will be lazy. We'll choose
+-- some to be lazy.
+
+-- We don't have a one parser. Make sure some parses at least one character by using NonEmpty.
+
+-- write some, many and none in its most specific form taking a Char-parser. Parsing result will be a String.
+-- generalize so that they use Array instead of String as parsing result
+-- generalize even more so that they use Unfoldable instead of Array
 
 -- some :: ∀ e a. Parser e a -> Parser e (Array a)
 -- some p = A.cons <$> p <*> many p
@@ -168,44 +170,24 @@ constChar' c = satisfy (show c) (_ == c)
 -- many :: ∀ e a. Parser e a -> Parser e (Array a)
 -- many p = some p <|> none
 
-instance lazyParser :: Lazy (Parser e a) where
-  defer f = Parser \s -> parse (f unit) s
+----------------------
+-- Helper Functions --
+----------------------
 
--- some :: ∀ e a f. U.Unfoldable f => (a -> f a -> f a) -> Parser e a -> Parser e (f a)
--- some cons p = cons <$> p <*> defer \_ -> many cons p
-some :: ∀ e a f. U.Unfoldable f => (a -> f a -> f a) -> Parser e a -> Parser e (NonEmpty f a)
-some cons p = (:|) <$> p <*> defer \_ -> many cons p
-
-many :: ∀ e a f. U.Unfoldable f => (a -> f a -> f a) -> Parser e a -> Parser e (f a)
-many cons p = fromNonEmpty cons <$> some cons p <|> pure U.none
-
-some' :: ∀ e. Parser e Char -> Parser e String
-some' p = fromCharArray <<< fromNonEmpty A.(:) <$> some A.(:) p
-
-many' :: ∀ e. Parser e Char -> Parser e String
-many' p = fromCharArray <$> many A.(:) p
+-- write a parser called digits that parses digits (at least one)
 
 -------------------------
 -- Using some and many --
 -------------------------
-digits :: ∀ e. ParserError e => Parser e String
-digits = some' digit
 
+-- write a parser called ugly that parses following regular expression including capturing:
 -- (\d{1,4}), ([a-zA-Z ]+)([0-9]*)
-ugly :: ∀ e. ParserError e => Parser e (Array String)
-ugly = do
-  digits1 <- range' 1 4 digit
-  constChar ','
-  constChar ' '
-  letters <- some' (letter <|> constChar' ' ')
-  digits2 <- many' digit
-  pure [ digits1, letters, digits2 ]
 
 test :: Effect Unit
 test = do
   log "Ch. 19 Some and Many Parsers."
-  log $ show $ parse' (some' digit) "2343423423abc"           -- (Right (Tuple "abc" "2343423423"))
-  log $ show $ parse' (many' digit) "_2343423423abc"          -- (Right (Tuple "_2343423423abc" ""))
-  log $ show $ parse' (some' digit) "_2343423423abc"          -- (Left (InvalidChar "digit"))
-  log $ show $ parse' ugly "17, some words"                   -- (Right (Tuple "" ["17","some words",""]))
-  log $ show $ parse' ugly "5432, some more words1234567890"  -- (Right (Tuple "" ["5432","some more words","1234567890"]))
+  -- log $ show $ parse' digits "2343423423abc"                  -- (Right (Tuple "abc" "2343423423"))
+  -- log $ show $ parse' (many' digit) "_2343423423abc"          -- (Right (Tuple "_2343423423abc" ""))
+  -- log $ show $ parse' digits "_2343423423abc"                 -- (Left (InvalidChar "digit"))
+  -- log $ show $ parse' ugly "17, some words"                   -- (Right (Tuple "" ["17","some words",""]))
+  -- log $ show $ parse' ugly "5432, some more words1234567890"  -- (Right (Tuple "" ["5432","some more words","1234567890"]))
