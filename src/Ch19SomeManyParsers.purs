@@ -1,4 +1,4 @@
-module Ch19SomeManyParser where
+module Ch19SomeManyParsers where
 
 import Prelude
 import Control.Alt (class Alt, (<|>))
@@ -146,23 +146,28 @@ constChar = void <<< constChar'
 constChar' :: ∀ e. ParserError e => Char -> Parser e Char
 constChar' c = satisfy (show c) (_ == c)
 
--- digitsToNum :: String -> Int
--- digitsToNum = fromMaybe 0 <<< fromString
 ---------------------------
 -- Some and Many Parsers --
 ---------------------------
+
 -------------------------
 -- some = one and many --
 -- many = some or none --
 -------------------------
+
+-------------------------
 -- some rhymes with 1  --
 -------------------------
+
 -- some :: ∀ e a. Parser e a -> Parser e (Array a)
 -- some p = A.cons <$> p <*> many p
 -- some :: ∀ e a. Parser e a -> Parser e (Array a)
 -- some p = A.cons <$> p <*> defer \_ -> many p
+-- none :: ∀ e a. Parser e a -> Parser e (Array a)
+-- none _ = pure []
 -- many :: ∀ e a. Parser e a -> Parser e (Array a)
--- many p = some p <|> pure []
+-- many p = some p <|> none
+
 instance lazyParser :: Lazy (Parser e a) where
   defer f = Parser \s -> parse (f unit) s
 
@@ -198,12 +203,9 @@ ugly = do
 
 test :: Effect Unit
 test = do
-  log "Ch. 19 Some and Many Parser."
-  -- log $ show $ parse' (some digit) "2343423423abc"
-  -- log $ show $ parse' (many digit) "_2343423423abc"
-  -- log $ show $ parse' (some digit) "_2343423423abc"
-  log $ show $ parse' (some' digit) "2343423423abc"
-  log $ show $ parse' (many' digit) "_2343423423abc"
-  log $ show $ parse' (some' digit) "_2343423423abc"
-  log $ show $ parse' ugly "17, some words"
-  log $ show $ parse' ugly "5432, some more words1234567890"
+  log "Ch. 19 Some and Many Parsers."
+  log $ show $ parse' (some' digit) "2343423423abc"           -- (Right (Tuple "abc" "2343423423"))
+  log $ show $ parse' (many' digit) "_2343423423abc"          -- (Right (Tuple "_2343423423abc" ""))
+  log $ show $ parse' (some' digit) "_2343423423abc"          -- (Left (InvalidChar "digit"))
+  log $ show $ parse' ugly "17, some words"                   -- (Right (Tuple "" ["17","some words",""]))
+  log $ show $ parse' ugly "5432, some more words1234567890"  -- (Right (Tuple "" ["5432","some more words","1234567890"]))
