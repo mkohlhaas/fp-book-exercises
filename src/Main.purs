@@ -15,7 +15,7 @@ import Effect (Effect)
 -- import Ch19 as Ch19
 -- import Ch19Parser as P1
 -- import Ch19DateParser as DP
-import Ch19SomeManyParsers as SM
+import Ch19SomeManyCombinators as SM
 
 main :: Effect Unit
 main = SM.test

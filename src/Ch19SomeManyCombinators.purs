@@ -1,4 +1,4 @@
-module Ch19SomeManyParsers where
+module Ch19SomeManyCombinators where
 
 import Prelude
 import Control.Alt (class Alt, (<|>))
@@ -152,29 +152,21 @@ constChar' c = satisfy (show c) (_ == c)
 -------------------------
 
 -- PureScript is a strict language. As both parsers are defined in terms of the other
--- write a Lazy instance for Parser. One of some or many will be lazy. We'll choose
--- some to be lazy.
+-- write a Lazy instance for Parser. (One of some or many will be lazy. We'll choose some to be lazy.)
+
+-- write some, many and none in a general form using Arrays
+-- write a specific version using Char and String; (we go from general to specific bc String is a primitive data type for which no functor exists)
+-- generalize even more so that they use Unfoldable instead of Array. Pass a cons function parameter bc Unfoldable does not have one.
 
 -- We don't have a one parser. Make sure some parses at least one character by using NonEmpty.
 
--- write some, many and none in its most specific form taking a Char-parser. Parsing result will be a String.
--- generalize so that they use Array instead of String as parsing result
--- generalize even more so that they use Unfoldable instead of Array
-
--- some :: ∀ e a. Parser e a -> Parser e (Array a)
--- some p = A.cons <$> p <*> many p
--- some :: ∀ e a. Parser e a -> Parser e (Array a)
--- some p = A.cons <$> p <*> defer \_ -> many p
--- none :: ∀ e a. Parser e a -> Parser e (Array a)
--- none _ = pure []
--- many :: ∀ e a. Parser e a -> Parser e (Array a)
--- many p = some p <|> none
+-- Make the resulting combinators some and many as general as possible by replacing Parser with a type constructor
 
 ----------------------
 -- Helper Functions --
 ----------------------
 
--- write a parser called digits that parses digits (at least one)
+-- write a parser called digits that parses digits (at least one); parser result is a String not an Int
 
 -------------------------
 -- Using some and many --
@@ -182,6 +174,10 @@ constChar' c = satisfy (show c) (_ == c)
 
 -- write a parser called ugly that parses following regular expression including capturing:
 -- (\d{1,4}), ([a-zA-Z ]+)([0-9]*)
+
+-- write the same parser in applicative style and call it uglyA
+
+-- write the same parser in with bind (>>=) and call it uglyB
 
 test :: Effect Unit
 test = do
