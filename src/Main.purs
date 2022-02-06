@@ -16,7 +16,8 @@ import Effect (Effect)
 -- import Ch19Parser as P1
 -- import Ch19DateParser as DP
 -- import Ch19SomeManyCombinators as SM
-import Ch19RWS as RWS
+-- import Ch19RWS as RWS
+import Ch21 as Ch21
 
 main :: Effect Unit
-main = RWS.test
+main = Ch21.test
