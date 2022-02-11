@@ -14,7 +14,7 @@ runStateT (StateT f) = f
 
 -- Functor
 instance functorStateT :: Functor m => Functor (StateT s m) where
-  map f (StateT g) = StateT \s -> map (\(Tuple a b) -> Tuple (f a) b) (g s)
+  map f (StateT g) = StateT \s -> g s <#> (\(Tuple a b) -> Tuple (f a) b)
 
 -- Apply
 instance applyStateT :: Monad m => Apply (StateT s m) where
@@ -28,10 +28,17 @@ instance applicativeStateT :: Monad m => Applicative (StateT s m) where
 instance bindStateT :: Monad m => Bind (StateT s m) where
   -- bind :: m a -> (a -> m b) -> m b
   -- bind :: StateT s m a -> (a -> StateT s m b) -> StateT s m b
-  bind (StateT x) f = StateT \s -> x s >>= \(Tuple x1 s1) -> case f x1 of StateT f2 -> f2 s1
+  -- bind (StateT x) f = StateT \s -> x s >>= \(Tuple x1 s1) -> case f x1 of StateT x2 -> x2 s1
+  bind (StateT x) f = StateT \s -> x s >>= \(Tuple x1 s1) -> runStateT (f x1) s1
 
 -- Monad
 instance monadStateT :: Monad m => Monad (StateT s m)
+
+-- MonadState
+-- MonadAsk
+-- MonadTell
+-- MonadThrow
+-- MonadError
 
 test :: Effect Unit
 test = do
